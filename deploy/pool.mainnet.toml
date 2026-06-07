@@ -197,11 +197,13 @@ set_threshold = true
 # — read-only, no gas — standing down if another instance is already live.
 enabled = true
 settle_secs = 90
-# Strict registration counting (NOT node-aware): any second registration stands
-# this instance down — maximum double-pay safety. A redeploy therefore pauses
-# until the old instance's stale registration expires (≤ max_expiration epochs).
-# Leave false on mainnet; testnet uses node_aware=true for fast redeploys.
-node_aware = false
+# node-aware counting: stand down only if registrations span >1 NODE. A redeploy
+# re-attests on the SAME node, so the previous boot's stale registration ghost no
+# longer pauses the new instance (strict counting would wait ≤ max_expiration
+# epochs for it to expire). Safe for a single-machine pool whose redeploys you
+# control — the only "second instance" is a stopped ghost, which can't pay. Set
+# false for strict (paranoid) safety only if you ever run genuinely multi-instance.
+node_aware = true
 
 [endpoint_registry]
 # Publish miner-facing endpoints (onion + stratum TLS fingerprint) on-chain,
